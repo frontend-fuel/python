@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rope Safety Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>🛠️ Rope Safety Prediction System</h1>
+    
+    <div class="accuracy-box">
+        <p>Model Accuracy: <strong>{{ accuracy * 100 }}%</strong></p>
+    </div>
+
+    <form id="prediction-form">
+        <label>Feature 1:</label>
+        <input type="number" name="feature_1" step="0.1" required>
+
+        <label>Feature 2:</label>
+        <input type="number" name="feature_2" step="0.1" required>
+
+        <label>Feature 3:</label>
+        <input type="number" name="feature_3" step="0.1" required>
+
+        <label>Feature 4:</label>
+        <input type="number" name="feature_4" step="0.1" required>
+
+        <button type="submit">🔍 Predict</button>
+    </form>
+
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    document.getElementById("prediction-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+        const response = await fetch("/predict", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+        const resultDiv = document.getElementById("result");
+
+        if (data.error) {
+            resultDiv.innerHTML = `<p class='error'>❌ Error: ${data.error}</p>`;
+        } else {
+            resultDiv.innerHTML = `
+                <div style='background: ${data.color}; color: white; padding: 20px; border-radius: 10px;'>
+                    <h2>${data.emoji} ${data.status}</h2>
+                    <p>Prediction: ${data.prediction}</p>
+                </div>
+            `;
+        }
+    });
+</script>
+
+</body>
+</html>
